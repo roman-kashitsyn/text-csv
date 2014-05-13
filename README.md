@@ -9,7 +9,9 @@ Properties:
 * Header-only: no build required, just include files
 * Supports various delimiters and quote characters
 * Able to handle named columns
-* (NYI) C++11 optional support
+* No external dependencies
+* C++11-ready (range-based for and movement semantics) but compiles cleanly
+  with C++03.
 
 Examples:
 =========
@@ -72,9 +74,8 @@ Examples:
     
     // ...
     
-    typedef double value_type;
-    typedef csv::input_column_iterator<value_type> I;
-    std::vector<value_type> vec;
+    typedef csv::input_column_iterator<double> I;
+    std::vector<double> vec;
     
     std::ifstream fs("numbers.csv");
     csv::csv_istream csvs(fs);

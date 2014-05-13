@@ -2,13 +2,16 @@
 #define TEXT_CSV_ITERATOR_HPP
 
 #include "text/csv/rows.hpp"
+#include <utility>
+#include <iterator>
 
 namespace text {
 namespace csv {
 
-template < typename ValueType,
-           typename Char = char,
-           typename Traits = std::char_traits<Char> >
+template < typename ValueType
+         , typename Char = char
+         , typename Traits = std::char_traits<Char>
+         >
 class input_column_iterator
 {
 public:
@@ -19,25 +22,11 @@ public:
     typedef const value_type * pointer;
     typedef ptrdiff_t difference_type;
 
-    input_column_iterator()
-        : is_(0)
-        , value_()
-        , pending_end_(false)
-    {}
+    input_column_iterator();
 
-    input_column_iterator(istream_type & is)
-        : is_(&is)
-        , value_()
-        , pending_end_(false)
-    {
-        advance();
-    }
+    input_column_iterator(istream_type & is);
 
-    input_column_iterator & operator++()
-    {
-        advance();
-        return *this;
-    }
+    input_column_iterator & operator++() { advance(); return *this; }
 
     input_column_iterator operator++(int)
     {
@@ -52,43 +41,24 @@ public:
     bool operator!=(const input_column_iterator & rhs) const
     { return !equals(rhs); }
 
-    reference operator*() const
-    { return value_; }
+    reference operator*() const { return value_; }
 
-    pointer operator->() const
-    { return &value_; }
+    pointer operator->() const { return &value_; }
 
 private:
-    void advance()
-    {
-        if (pending_end_) {
-            is_ = 0;
-            return;
-        }
+    void advance();
+    bool equals(const input_column_iterator & rhs) const;
 
-        if (is_) {
-            *is_ >> value_;
-            if (!is_->has_more_fields()) {
-                pending_end_ = true;
-            }
-        }
-    }
-
-    bool equals(const input_column_iterator & rhs) const
-    {
-        if (is_ == 0 && rhs.is_ == 0) return true;
-        return is_ == rhs.is_ && value_ == rhs.value_;
-    }
-
+private:
     istream_type * is_;
     ValueType value_;
     bool pending_end_;
 };
 
-template < typename ValueType,
-           typename Char = char,
-           typename Traits = std::char_traits<Char>
-           >
+template < typename ValueType
+         , typename Char = char
+         , typename Traits = std::char_traits<Char>
+         >
 class output_column_iterator
 {
 public:
@@ -104,22 +74,24 @@ public:
     {}
 
     output_column_iterator & operator=(const value_type & value)
-    { is_ << value; return *this; }
+    {
+        is_ << value;
+        return *this;
+    }
 
-    output_column_iterator & operator*()
-    { return *this; }
+    output_column_iterator & operator*() { return *this; }
 
-    output_column_iterator & operator++()
-    { return *this; }
+    output_column_iterator & operator++() { return *this; }
 
-    output_column_iterator & operator++(int)
-    { return *this; }
+    output_column_iterator & operator++(int) { return *this; }
 
 private:
     ostream_type & is_;
 };
 
-template < typename RangeType, typename RowType >
+template < typename RangeType
+         , typename RowType
+         >
 class input_row_iterator
 {
 public:
@@ -159,11 +131,9 @@ public:
     bool operator!=(const input_row_iterator & rhs) const
     { return range_ptr_ != rhs.range_ptr_; }
 
-    reference operator*() const
-    { return *row_ptr_; }
+    reference operator*() const { return *row_ptr_; }
 
-    pointer operator->() const
-    { return row_ptr_;  }
+    pointer operator->() const { return row_ptr_;  }
 
 private:
     void advance()
@@ -203,14 +173,11 @@ public:
         return iterator(*this, last_row_);
     }
 
-    iterator end()
-    { return iterator(); }
+    iterator end() { return iterator(); }
 
-    bool empty()
-    { return !is_; }
+    bool empty() { return !is_; }
 
-    void move_next()
-    { is_ >> last_row_; }
+    void move_next() { is_ >> last_row_; }
 
 private:
     stream_type is_;
@@ -243,14 +210,11 @@ public:
         return iterator(*this, last_row_);
     }
 
-    iterator end()
-    { return iterator(); }
+    iterator end() { return iterator(); }
 
-    bool empty()
-    { return !is_; }
+    bool empty() { return !is_; }
 
-    void move_next()
-    { is_ >> last_row_; }
+    void move_next() { is_ >> last_row_; }
 
 private:
     stream_type is_;
@@ -259,10 +223,65 @@ private:
     bool started_;
 };
 
+template <typename MapRow>
+class zipping_iterator
+{
+    typedef typename MapRow::value_type string_type;
+public:
+    typedef std::pair<string_type, string_type> value_type;
+    typedef ptrdiff_t difference_type;
+    typedef value_type *pointer;
+    typedef value_type &reference;
+    typedef std::random_access_iterator_tag iterator_category;
+
+    zipping_iterator(const MapRow &row, std::size_t pos);
+
+    pointer operator->() { return &value_; }
+
+    reference operator*() { return value_; }
+
+    bool operator==(const zipping_iterator &) const;
+    bool operator!=(const zipping_iterator &) const;
+
+    zipping_iterator &operator++();
+    zipping_iterator operator++(int);
+
+    zipping_iterator &operator--();
+    zipping_iterator operator--(int);
+
+    zipping_iterator &operator+=(difference_type);
+    zipping_iterator operator+(difference_type) const;
+
+    zipping_iterator &operator-=(difference_type);
+    zipping_iterator operator-(difference_type) const;
+
+private:
+    void load();
+
+private:
+    const MapRow *row_;
+    value_type value_;
+    std::size_t pos_;
+};
+
+template <typename MapRow>
+zipping_iterator<MapRow> pairs_begin(const MapRow &row)
+{
+    return zipping_iterator<MapRow>(row, 0);
+}
+
+template <typename MapRow>
+zipping_iterator<MapRow> pairs_end(const MapRow &row)
+{
+    return zipping_iterator<MapRow>(row, row.size());
+}
+
 typedef basic_row_range<char> row_range;
 typedef basic_map_row_range<char> map_row_range;
 typedef basic_row_range<wchar_t> wrow_range;
 
 } }
+
+#include "text/csv/iterator_inl.hpp"
 
 #endif

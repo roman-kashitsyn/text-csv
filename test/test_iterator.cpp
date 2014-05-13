@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <map>
 
 namespace csv = ::text::csv;
 
@@ -82,6 +83,43 @@ BOOST_AUTO_TEST_CASE(output_column_iterator_string_test)
     std::copy(values.begin(), values.end(),
               csv::output_column_iterator<std::string>(os));
     BOOST_CHECK_EQUAL(ss.str(), "\"a\",\"b\",\"c\"");
+}
+
+BOOST_AUTO_TEST_CASE(zipping_iterator_test)
+{
+    std::istringstream is("c,b,a\n3,2,1");
+    csv::csv_istream cis(is);
+    csv::header h(cis);
+    csv::map_row mr(h);
+    cis >> mr;
+
+    csv::zipping_iterator<csv::map_row> b = pairs_begin(mr), e = pairs_end(mr);
+    BOOST_CHECK_EQUAL("c", b->first);
+    BOOST_CHECK_EQUAL("3", b->second);
+    ++b;
+    BOOST_CHECK_EQUAL("b", b->first);
+    BOOST_CHECK_EQUAL("2", b->second);
+    ++b;
+    BOOST_CHECK_EQUAL("a", b->first);
+    BOOST_CHECK_EQUAL("1", b->second);
+    ++b;
+    BOOST_CHECK(b == e);
+}
+
+BOOST_AUTO_TEST_CASE(map_construction_test)
+{
+    typedef std::map<std::string, std::string> string_map;
+
+    std::istringstream is("c,a,b\n3,1,2");
+    csv::csv_istream cis(is);
+    csv::map_row row(cis);
+
+    string_map map(csv::pairs_begin(row), csv::pairs_end(row));
+
+    BOOST_CHECK_EQUAL(map.size(), 3);
+    BOOST_CHECK_EQUAL(map["a"], "1");
+    BOOST_CHECK_EQUAL(map["b"], "2");
+    BOOST_CHECK_EQUAL(map["c"], "3");
 }
 
 BOOST_AUTO_TEST_SUITE_END()

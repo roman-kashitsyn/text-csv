@@ -26,26 +26,43 @@ BOOST_AUTO_TEST_CASE(row_parsing_test)
 
 BOOST_AUTO_TEST_CASE(map_row_lookup_test)
 {
-    csv::row first_row(3);
-    first_row[0] = "id";
-    first_row[1] = "name";
+    const std::size_t n = 3;
+    csv::row first_row(n);
+    first_row[0] = "name";
+    first_row[1] = "id";
     first_row[2] = "score";
 
     csv::header h(first_row);
 
+    for (std::size_t i = 0; i < n; ++i) {
+        BOOST_CHECK_EQUAL(first_row[i], h.name_of(i));
+    }
+
     csv::map_row r(h);
 
-    r[0] = "12";
-    r[1] = "John";
+    r[0] = "John";
+    r[1] = "12";
     r[2] = "0.3";
 
-    BOOST_CHECK_EQUAL(r[1], r["name"]);
-    BOOST_CHECK_EQUAL(r[0], r["id"]);
+    BOOST_CHECK_EQUAL(r[0], r["name"]);
+    BOOST_CHECK_EQUAL(r[1], r["id"]);
     BOOST_CHECK_EQUAL(r[2], r["score"]);
+
+    BOOST_CHECK_EQUAL(12, r.as<int>(1));
+    BOOST_CHECK_EQUAL(12, r.as<int>("id"));
+    BOOST_CHECK_EQUAL(0.3, r.as<double>(2));
+    BOOST_CHECK_EQUAL(0.3, r.as<double>("score"));
 
     r["score"] = "0.5";
 
     BOOST_CHECK_EQUAL("0.5", r[2]);
+    BOOST_CHECK_EQUAL("0.5", r["score"]);
+    BOOST_CHECK_EQUAL(0.5, r.as<double>(2));
+    BOOST_CHECK_EQUAL(0.5, r.as<double>("score"));
+
+    for (std::size_t i = 0; i < n; ++i) {
+        BOOST_CHECK(r.has_key(first_row[i]));
+    }
 }
 
 BOOST_AUTO_TEST_SUITE_END()
