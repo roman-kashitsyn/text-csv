@@ -1,0 +1,14 @@
+# -*- mode: yaml -*-
+BasedOnStyle: Mozilla
+ColumnLimit: 80
+BreakBeforeBraces: Linux
+BinPackParameters: false
+UseTab: Never
+IndentWidth: 4
+AllowShortIfStatementsOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlignTrailingComments: true
+IndentCaseLabels: false
+# vim: ft=yaml
+
