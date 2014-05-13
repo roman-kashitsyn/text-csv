@@ -14,6 +14,6 @@ if (Boost_FOUND)
     test/test_ranges.cpp
     )
   target_link_libraries(csv_test
-    boost_unit_test_framework-mt
+    boost_unit_test_framework
     )
 endif()
