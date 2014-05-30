@@ -5,23 +5,25 @@
 
 #include <boost/test/included/unit_test.hpp>
 #include <sstream>
+#include <iostream>
 
 namespace csv = ::text::csv;
 
 namespace {
 
-template <std::size_t N>
-void generic_input_test(const char* text, const char *(&parts)[N])
+template <typename Char, std::size_t N>
+void generic_input_test(const Char* text, const Char *(&parts)[N])
 {
-    std::istringstream is(text);
-    text::csv::csv_istream csv_in(is);
+    std::basic_istringstream<Char> is(text);
+    text::csv::basic_csv_istream<Char> csv_in(is);
 
-    std::string dest;
+    std::basic_string<Char> dest;
     std::size_t i = 0;
     while (csv_in) {
         csv_in >> dest;
         BOOST_ASSERT(i < N);
-        BOOST_CHECK_EQUAL(dest, parts[i++]);
+        BOOST_CHECK(dest == parts[i]);
+        i++;
     }
     BOOST_ASSERT(i > 0);
 }
@@ -46,6 +48,16 @@ BOOST_AUTO_TEST_CASE(simple_grid_out_test)
                       "7,8,9\r\n");
 }
 
+BOOST_AUTO_TEST_CASE(wide_grid_out_test)
+{
+    std::wostringstream os;
+    csv::csv_wostream csv_out(os);
+
+    csv_out << 1 << 2 << 3 << csv::endl
+            << 4 << 5 << 6 << csv::endl
+            ;
+    BOOST_CHECK(os.str() == L"1,2,3\r\n4,5,6\r\n");
+}
 
 BOOST_AUTO_TEST_CASE(strings_with_quotes_and_commas)
 {
@@ -75,7 +87,7 @@ BOOST_AUTO_TEST_CASE(custom_delimiter_test)
     std::istringstream ss(text);
     csv::csv_istream csv_in(ss, '|');
     std::string sink;
-    for (int i = 0; i < sizeof parts / sizeof parts[0]; ++i) {
+    for (std::size_t i = 0; i < sizeof parts / sizeof parts[0]; ++i) {
         csv_in >> sink;
         BOOST_CHECK_EQUAL(sink, parts[i]);
     }
@@ -139,6 +151,13 @@ BOOST_AUTO_TEST_CASE(line_splitting)
         csv_in >> dest;
         BOOST_CHECK(!csv_in.has_more_fields());
     }
+}
+
+BOOST_AUTO_TEST_CASE(wide_input_stream)
+{
+    const wchar_t *parts[] = {L"1", L"2", L"3", L"4"};
+    const wchar_t *const text = L"1,2,3,4";
+    generic_input_test(text, parts);
 }
 
 BOOST_AUTO_TEST_SUITE_END()

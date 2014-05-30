@@ -83,7 +83,7 @@ public:
     { return read_raw(d); }
 
     bool eof()
-    { return peek_char() == Traits::eof(); }
+    { return is_eof(peek_char()); }
 
     operator bool()
     { return is_.good() && !eof(); }
@@ -125,6 +125,7 @@ private:
     void read_ending(char_type c);
     void unexpected(char_type c);
     void unexpected_eof();
+    bool is_eof(char_type);
 };
 
 template <typename Char, typename Traits>
@@ -186,7 +187,7 @@ basic_csv_istream<Char, Traits>::read_non_escaped
         } else if (c == wlf) {
             next_line();
             return;
-        } else if (c == Traits::eof()) {
+        } else if (is_eof(c)) {
             more_fields_ = false;
             return;
         } else {
@@ -212,7 +213,7 @@ void basic_csv_istream<Char, Traits>::read_escaped
                 read_ending(look_ahead);
                 return;
             }
-        } else if (c == Traits::eof()) {
+        } else if (is_eof(c)) {
             unexpected_eof();
         } else {
             dest.push_back(c);
@@ -233,7 +234,7 @@ void basic_csv_istream<Char, Traits>::read_ending(char_type c)
         next_line();
     } else if (c == is_.widen(LF)) {
         next_line();
-    } else if (c == Traits::eof()) {
+    } else if (is_eof(c)) {
         more_fields_ = false;
     } else {
         unexpected(c);
@@ -270,12 +271,12 @@ void basic_csv_istream<Char, Traits>::skip_char()
 template <typename Char, typename Traits>
 void basic_csv_istream<Char, Traits>::put_back(char_type c)
 {
-    pos_ -= 1;;
+    pos_ -= 1;
     is_.putback(c);
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::unexpected(char_type c)
+void basic_csv_istream<Char, Traits>::unexpected(char_type /* c */)
 {
     throw std::runtime_error("Unexpected character");
 }
@@ -284,6 +285,12 @@ template <typename Char, typename Traits>
 void basic_csv_istream<Char, Traits>::unexpected_eof()
 {
     throw std::runtime_error("Unexpected end of input");
+}
+
+template <typename Char, typename Traits>
+bool basic_csv_istream<Char, Traits>::is_eof(char_type c)
+{
+    return Traits::to_char_type(Traits::eof()) == c;
 }
 
 
