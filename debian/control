@@ -1,0 +1,17 @@
+Source: libtext-csv0
+Section: libdevel
+Priority: optional
+Maintainer: Roman Kashitsyn <roman.kashitsyn@gmail.com>
+Build-Depends:
+ cmake (>= 2.8.10),
+ debhelper (>= 7)
+Standards-Version: 3.9.4
+Vcs-Git: git://github.com/roman-kashitsyn/text-csv.git
+Vcs-Browser: https://github.com/roman-kashitsyn/text-csv
+
+Package: libtext-csv0-dev
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: C++ library to read and write CSV files.
+ The C++ library provides STL-like interface for reading
+ and writing CSV (Comma Separated Values) files.

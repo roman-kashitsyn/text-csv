@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.10)
 project(test-csv)
 
 include_directories(include)
@@ -16,4 +16,17 @@ if (Boost_FOUND)
   target_link_libraries(csv_test
     boost_unit_test_framework
     )
+  set_target_properties(csv_test
+    PROPERTIES
+    COMPILE_FLAGS
+    "-Wall -Wextra -Werror"
+    )
 endif()
+
+install(
+    FILES include/text/csv/istream.hpp
+          include/text/csv/ostream.hpp
+          include/text/csv/iterator.hpp
+          include/text/csv/rows.hpp
+          include/text/csv/stream_fwd.hpp
+    DESTINATION include/text/csv/)

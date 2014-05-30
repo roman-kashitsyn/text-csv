@@ -1,0 +1,8 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: libtext-csv0
+Upstream-Contact: Roman Kashitsyn <roman.kashitsyn@gmail.com>
+Source: https://github.com/roman-kashitsyn/text-csv
+
+Files: *
+Copyright: (C) 2014 Roman Kashitsyn <roman.kashitsyn@gmail.com>
+License: MIT
