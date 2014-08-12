@@ -5,7 +5,7 @@
 
 #include <boost/test/included/unit_test.hpp>
 #include <sstream>
-#include <iostream>
+#include <locale>
 
 namespace csv = ::text::csv;
 
@@ -66,11 +66,55 @@ BOOST_AUTO_TEST_CASE(strings_with_quotes_and_commas)
 
     csv_out << 1 << " \" Hello \" " << 1.5 << csv::endl
             << "Hello, how are you?" << 3 << 4 << csv::endl
+            << "Delim , and \"quotes\"" << csv::endl
         ;
 
     BOOST_CHECK_EQUAL(os.str(),
-                      "1,\" \"\" Hello \"\" \",\"1.5\"\r\n"
-                      "\"Hello, how are you?\",3,4\r\n");
+                      "1, \" Hello \" ,1.5\r\n"
+                      "\"Hello, how are you?\",3,4\r\n"
+                      "\"Delim , and \"\"quotes\"\"\"\r\n");
+}
+
+BOOST_AUTO_TEST_CASE(read_quoted)
+{
+    std::istringstream is("abc,\"Delim , and \"\"quotes\"\"\"");
+    csv::csv_istream csv_in(is);
+    std::string left, right;
+    csv_in >> left >> right;
+    BOOST_CHECK_EQUAL(left, "abc");
+    BOOST_CHECK_EQUAL(right, "Delim , and \"quotes\"");
+}
+
+namespace {
+
+struct thousand_sep : std::numpunct<char> {
+    string_type do_grouping() const { return "\3"; }
+    char_type do_thousand_sep() const { return ','; }
+};
+
+}
+
+BOOST_AUTO_TEST_CASE(numbers_with_commas)
+{
+    std::ostringstream os;
+    os.imbue(std::locale(std::locale::classic(), new thousand_sep));
+
+    csv::csv_ostream csv_out(os);
+
+    csv_out << 1000000 << 20000 << 100 << csv::endl;
+
+    BOOST_CHECK_EQUAL(os.str(), "\"1,000,000\",\"20,000\",100\r\n");
+}
+
+BOOST_AUTO_TEST_CASE(empty_cells_test)
+{
+    std::ostringstream os;
+    csv::csv_ostream csv_out(os);
+    csv_out << "" << "a" << "" << csv::endl
+            << "b" << "" << "c" << csv::endl;
+    BOOST_CHECK_EQUAL(os.str(),
+                      ",a,\r\n"
+                      "b,,c\r\n");
 }
 
 BOOST_AUTO_TEST_CASE(simple_grid_in_test)

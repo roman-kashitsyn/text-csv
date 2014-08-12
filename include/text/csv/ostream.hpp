@@ -4,6 +4,7 @@
 #include "text/csv/stream_fwd.hpp"
 #include <ostream>
 #include <string>
+#include <sstream>
 
 namespace text {
 namespace csv {
@@ -14,16 +15,15 @@ class basic_csv_ostream
 public:
     typedef Char char_type;
     typedef Traits traits_type;
+    typedef std::basic_ostream<Char, Traits> stream_type;
+    typedef std::basic_string<Char, Traits> string_type;
     typedef basic_csv_ostream & (*manip)(basic_csv_ostream &);
 
-    basic_csv_ostream(std::basic_ostream<Char, Traits> & os);
+    basic_csv_ostream(stream_type & os);
 
-    basic_csv_ostream(std::basic_ostream<Char, Traits> & os,
-                      char_type delimiter);
+    basic_csv_ostream(stream_type & os, char_type delimiter);
 
-    basic_csv_ostream(std::basic_ostream<Char, Traits> & os,
-                      char_type delimiter,
-                      char_type quote);
+    basic_csv_ostream(stream_type & os, char_type delimiter, char_type quote);
 
     basic_csv_ostream & operator<<(bool b)
     { return insert(b); }
@@ -35,19 +35,17 @@ public:
     { return insert(l); }
 
     basic_csv_ostream & operator<<(float f)
-    { return insert_quoted(f); }
+    { return insert(f); }
 
     basic_csv_ostream & operator<<(double d)
-    { return insert_quoted(d); }
+    { return insert(d); }
 
     basic_csv_ostream & operator<<(long double ld)
-    { return insert_quoted(ld); }
+    { return insert(ld); }
 
     basic_csv_ostream & operator<<(char_type const *);
 
-    basic_csv_ostream & operator<<(std::basic_string<Char, Traits> const&);
-
-    //    basic_csv_ostream & operator<<(line const&);
+    basic_csv_ostream & operator<<(string_type const &);
 
     basic_csv_ostream & operator<<(manip m)
     { return m(*this); }
@@ -55,8 +53,8 @@ public:
     basic_csv_ostream & end_line();
 
 private:
-    basic_csv_ostream(basic_csv_ostream const&);
-    basic_csv_ostream & operator=(basic_csv_ostream const&);
+    basic_csv_ostream(basic_csv_ostream const &);
+    basic_csv_ostream & operator=(basic_csv_ostream const &);
 
     void insert_delimiter()
     {
@@ -67,26 +65,22 @@ private:
         }
     }
 
-    template <typename T>
-    basic_csv_ostream & insert(T const& t)
-    {
-        insert_delimiter();
-        os_ << t;
-        return *this;
-    }
+    basic_csv_ostream & insert(char_type const * begin,
+                               char_type const * end);
 
     template <typename T>
-    basic_csv_ostream & insert_quoted(T const & t)
+    basic_csv_ostream & insert(T const & t)
     {
-        insert_delimiter();
-        os_ << quote_ << t << quote_;
-        return *this;
+        std::basic_ostringstream<Char, Traits> buf;
+        buf.copyfmt(os_);
+        buf << t;
+        return (*this) << buf.str();
     }
 
 private:
-    std::basic_ostream<Char, Traits> & os_;
-    const char_type delim_;
-    const char_type quote_;
+    stream_type & os_;
+    char_type const delim_;
+    char_type const quote_;
     bool first_;
 };
 
@@ -124,40 +118,18 @@ basic_csv_ostream<Char, Traits>::basic_csv_ostream
 
 template <typename Char, typename Traits>
 basic_csv_ostream<Char, Traits> &
-basic_csv_ostream<Char, Traits>::operator<<
-(char_type const * c)
+basic_csv_ostream<Char, Traits>::operator<<(char_type const * c)
 {
-    insert_delimiter();
-    os_.put(quote_);
-    while (*c) {
-        if (*c == quote_) {
-            os_.put(quote_);
-        }
-        os_.put(*c);
-        ++c;
-    }
-    os_.put(quote_);
-
-    return *this;
+    char_type const * end = c;
+    while (*end) ++end;
+    return insert(c, end);
 }
 
 template <typename Char, typename Traits>
 basic_csv_ostream<Char, Traits> &
-basic_csv_ostream<Char, Traits>::operator<<
-(std::basic_string<Char, Traits> const& s)
+basic_csv_ostream<Char, Traits>::operator<<(string_type const & s)
 {
-    insert_delimiter();
-
-    os_.put(quote_);
-    for (std::size_t i = 0, n = s.size(); i < n; ++i) {
-        if (s[i] == quote_) {
-            os_.put(quote_);
-        }
-        os_.put(s[i]);
-    }
-    os_.put(quote_);
-
-    return *this;
+    return insert(s.data(), s.data() + s.size());
 }
 
 template <typename Char, typename Traits>
@@ -176,6 +148,37 @@ basic_csv_ostream<Char, Traits> & endl(basic_csv_ostream<Char, Traits> & cos)
 {
     return cos.end_line();
 }
+
+template <typename Char, typename Traits>
+basic_csv_ostream<Char, Traits> &
+basic_csv_ostream<Char, Traits>::insert(char_type const * begin,
+                                        char_type const * end)
+{
+    insert_delimiter();
+
+    bool has_delim = false;
+    for (char_type const * pos = begin; pos != end; ++pos) {
+        if (*pos == delim_) {
+            has_delim = true;
+            break;
+        }
+    }
+
+    if (!has_delim) {
+        os_.write(begin, std::streamsize(end - begin));
+    } else {
+        os_.put(quote_);
+        for (char_type const * pos = begin; pos != end; ++pos) {
+            if (*pos == quote_) {
+                os_.put(quote_);
+            }
+            os_.put(*pos);
+        }
+        os_.put(quote_);
+    }
+    return *this;
+}
+
 
 } }
 

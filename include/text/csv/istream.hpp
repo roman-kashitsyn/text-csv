@@ -29,8 +29,10 @@ class basic_csv_istream
 {
 public:
     typedef Char char_type;
+    typedef std::basic_istream<Char, Traits> stream_type;
+    typedef std::basic_string<Char, Traits> string_type;
 
-    basic_csv_istream(std::basic_istream<Char, Traits> & is)
+    basic_csv_istream(stream_type & is)
         : is_(is)
         , delim_(is.widen(COMMA))
         , quote_(is.widen(QUOTE))
@@ -39,8 +41,7 @@ public:
         , more_fields_(true)
     {}
 
-    basic_csv_istream(std::basic_istream<Char, Traits> & is,
-                      char_type delimiter)
+    basic_csv_istream(stream_type & is, char_type delimiter)
         : is_(is)
         , delim_(delimiter)
         , quote_(is.widen(QUOTE))
@@ -49,8 +50,7 @@ public:
         , more_fields_(true)
     {}
 
-    basic_csv_istream(std::basic_istream<Char, Traits> & is,
-                      char_type delimiter, char_type quote)
+    basic_csv_istream(stream_type & is, char_type delimiter, char_type quote)
         : is_(is)
         , delim_(delimiter)
         , quote_(quote)
@@ -59,7 +59,7 @@ public:
         , more_fields_(true)
     {}
 
-    basic_csv_istream & operator>>(std::basic_string<Char, Traits> &);
+    basic_csv_istream & operator>>(string_type &);
 
     basic_csv_istream & operator>>(bool & b)
     { return read_raw(b); }
@@ -101,7 +101,7 @@ public:
     { return pos_; }
 
 private:
-    std::basic_istream<Char, Traits> & is_;
+    stream_type & is_;
     const char_type delim_;
     const char_type quote_;
     std::size_t line_;
@@ -115,8 +115,8 @@ private:
     template <typename T>
     basic_csv_istream & read_raw(T & dest);
 
-    void read_non_escaped(std::basic_string<Char, Traits> & dest);
-    void read_escaped(std::basic_string<Char, Traits> & dest);
+    void read_non_escaped(string_type & dest);
+    void read_escaped(string_type & dest);
     void next_line();
     char_type get_char();
     char_type peek_char();
@@ -130,8 +130,7 @@ private:
 
 template <typename Char, typename Traits>
 basic_csv_istream<Char, Traits> &
-basic_csv_istream<Char, Traits>::operator>>
-(std::basic_string<Char, Traits> & dest)
+basic_csv_istream<Char, Traits>::operator>>(string_type & dest)
 {
     dest.clear();
 
@@ -166,8 +165,7 @@ basic_csv_istream<Char, Traits>::read_raw(T & dest)
 
 template <typename Char, typename Traits>
 void
-basic_csv_istream<Char, Traits>::read_non_escaped
-(std::basic_string<Char, Traits> & dest)
+basic_csv_istream<Char, Traits>::read_non_escaped(string_type & dest)
 {
     const char_type wlf = is_.widen(LF);
     const char_type wcr = is_.widen(CR);
@@ -197,8 +195,7 @@ basic_csv_istream<Char, Traits>::read_non_escaped
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::read_escaped
-(std::basic_string<Char, Traits> & dest)
+void basic_csv_istream<Char, Traits>::read_escaped(string_type & dest)
 {
     skip_char(); // ignore starting quote
     while (is_) {

@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(output_column_iterator_string_test)
 
     std::copy(values.begin(), values.end(),
               csv::output_column_iterator<std::string>(os));
-    BOOST_CHECK_EQUAL(ss.str(), "\"a\",\"b\",\"c\"");
+    BOOST_CHECK_EQUAL(ss.str(), "a,b,c");
 }
 
 BOOST_AUTO_TEST_CASE(zipping_iterator_test)
