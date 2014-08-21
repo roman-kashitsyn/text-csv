@@ -7,10 +7,10 @@
 namespace text {
 namespace csv {
 
-template < typename Char, typename Traits = std::char_traits<Char> >
+template <typename Char, typename Traits = std::char_traits<Char> >
 class basic_csv_istream;
 
-template < typename Char, typename Traits = std::char_traits<Char> >
+template <typename Char, typename Traits = std::char_traits<Char> >
 class basic_csv_ostream;
 
 typedef basic_csv_istream<char> csv_istream;
@@ -23,5 +23,5 @@ const char COMMA = ',';
 const char CR = '\r';
 const char LF = '\n';
 const char QUOTE = '"';
-
-} }
+}
+}

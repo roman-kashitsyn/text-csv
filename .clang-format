@@ -1,14 +1,12 @@
 # -*- mode: yaml -*-
-BasedOnStyle: Mozilla
+BasedOnStyle: LLVM
 ColumnLimit: 80
-BreakBeforeBraces: Linux
-BinPackParameters: false
-UseTab: Never
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+BreakConstructorInitializersBeforeComma: true
+AlwaysBreakTemplateDeclarations: true
 IndentWidth: 4
-AllowShortIfStatementsOnASingleLine: false
-AllowShortFunctionsOnASingleLine: false
-AllowShortLoopsOnASingleLine: false
 AlignTrailingComments: true
 IndentCaseLabels: false
+AccessModifierOffset: -4
 # vim: ft=yaml
 

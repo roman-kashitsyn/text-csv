@@ -25,8 +25,7 @@ namespace text {
 namespace csv {
 
 template <typename Char, typename Traits>
-class basic_csv_istream
-{
+class basic_csv_istream {
 public:
     typedef Char char_type;
     typedef std::basic_istream<Char, Traits> stream_type;
@@ -59,49 +58,36 @@ public:
         , more_fields_(true)
     {}
 
-    basic_csv_istream & operator>>(string_type &);
+    basic_csv_istream &operator>>(string_type &);
 
-    basic_csv_istream & operator>>(bool & b)
-    { return read_raw(b); }
+    basic_csv_istream &operator>>(bool &b) { return read_raw(b); }
 
-    basic_csv_istream & operator>>(int & i)
-    { return read_raw(i); }
+    basic_csv_istream &operator>>(int &i) { return read_raw(i); }
 
-    basic_csv_istream & operator>>(unsigned & u)
-    { return read_raw(u); }
+    basic_csv_istream &operator>>(unsigned &u) { return read_raw(u); }
 
-    basic_csv_istream & operator>>(long & l)
-    { return read_raw(l); }
+    basic_csv_istream &operator>>(long &l) { return read_raw(l); }
 
-    basic_csv_istream & operator>>(unsigned long & ul)
-    { return read_raw(ul); }
+    basic_csv_istream &operator>>(unsigned long &ul) { return read_raw(ul); }
 
-    basic_csv_istream & operator>>(float & f)
-    { return read_raw(f); }
+    basic_csv_istream &operator>>(float &f) { return read_raw(f); }
 
-    basic_csv_istream & operator>>(double & d)
-    { return read_raw(d); }
+    basic_csv_istream &operator>>(double &d) { return read_raw(d); }
 
-    bool eof()
-    { return is_eof(peek_char()); }
+    bool eof() { return is_eof(peek_char()); }
 
-    operator bool()
-    { return is_.good() && !eof(); }
+    operator bool() { return is_.good() && !eof(); }
 
-    bool has_more_fields() const
-    { return more_fields_; }
+    bool has_more_fields() const { return more_fields_; }
 
-    void has_more_fields(bool more_fields)
-    { more_fields_ = more_fields; }
+    void has_more_fields(bool more_fields) { more_fields_ = more_fields; }
 
-    std::size_t line_number() const
-    { return line_; }
+    std::size_t line_number() const { return line_; }
 
-    unsigned column_number() const
-    { return pos_; }
+    unsigned column_number() const { return pos_; }
 
 private:
-    stream_type & is_;
+    stream_type &is_;
     const char_type delim_;
     const char_type quote_;
     std::size_t line_;
@@ -109,14 +95,14 @@ private:
     bool more_fields_;
 
 private:
-    basic_csv_istream(basic_csv_istream const&);
-    basic_csv_istream & operator=(basic_csv_istream const&);
+    basic_csv_istream(basic_csv_istream const &);
+    basic_csv_istream &operator=(basic_csv_istream const &);
 
     template <typename T>
-    basic_csv_istream & read_raw(T & dest);
+    basic_csv_istream &read_raw(T &dest);
 
-    void read_non_escaped(string_type & dest);
-    void read_escaped(string_type & dest);
+    void read_non_escaped(string_type &dest);
+    void read_escaped(string_type &dest);
     void next_line();
     char_type get_char();
     char_type peek_char();
@@ -129,9 +115,8 @@ private:
 };
 
 template <typename Char, typename Traits>
-basic_csv_istream<Char, Traits> &
-basic_csv_istream<Char, Traits>::operator>>(string_type & dest)
-{
+basic_csv_istream<Char, Traits> &basic_csv_istream<Char, Traits>::
+operator>>(string_type &dest) {
     dest.clear();
 
     const char_type c = peek_char();
@@ -146,8 +131,7 @@ basic_csv_istream<Char, Traits>::operator>>(string_type & dest)
 template <typename Char, typename Traits>
 template <typename T>
 basic_csv_istream<Char, Traits> &
-basic_csv_istream<Char, Traits>::read_raw(T & dest)
-{
+basic_csv_istream<Char, Traits>::read_raw(T &dest) {
     const char_type c = peek_char();
     if (c == quote_) {
         skip_char();
@@ -164,9 +148,7 @@ basic_csv_istream<Char, Traits>::read_raw(T & dest)
 }
 
 template <typename Char, typename Traits>
-void
-basic_csv_istream<Char, Traits>::read_non_escaped(string_type & dest)
-{
+void basic_csv_istream<Char, Traits>::read_non_escaped(string_type &dest) {
     const char_type wlf = is_.widen(LF);
     const char_type wcr = is_.widen(CR);
 
@@ -195,8 +177,7 @@ basic_csv_istream<Char, Traits>::read_non_escaped(string_type & dest)
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::read_escaped(string_type & dest)
-{
+void basic_csv_istream<Char, Traits>::read_escaped(string_type &dest) {
     skip_char(); // ignore starting quote
     while (is_) {
         const char_type c = get_char();
@@ -219,8 +200,7 @@ void basic_csv_istream<Char, Traits>::read_escaped(string_type & dest)
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::read_ending(char_type c)
-{
+void basic_csv_istream<Char, Traits>::read_ending(char_type c) {
     if (c == delim_) {
         more_fields_ = true;
     } else if (c == is_.widen(CR)) {
@@ -239,58 +219,49 @@ void basic_csv_istream<Char, Traits>::read_ending(char_type c)
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::next_line()
-{
+void basic_csv_istream<Char, Traits>::next_line() {
     line_ += 1;
     pos_ = 0;
     more_fields_ = false;
 }
 
 template <typename Char, typename Traits>
-Char basic_csv_istream<Char, Traits>::get_char()
-{
+Char basic_csv_istream<Char, Traits>::get_char() {
     pos_ += 1;
     return is_.get();
 }
 
 template <typename Char, typename Traits>
-Char basic_csv_istream<Char, Traits>::peek_char()
-{
+Char basic_csv_istream<Char, Traits>::peek_char() {
     return is_.peek();
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::skip_char()
-{
+void basic_csv_istream<Char, Traits>::skip_char() {
     is_.ignore();
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::put_back(char_type c)
-{
+void basic_csv_istream<Char, Traits>::put_back(char_type c) {
     pos_ -= 1;
     is_.putback(c);
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::unexpected(char_type /* c */)
-{
+void basic_csv_istream<Char, Traits>::unexpected(char_type /* c */) {
     throw std::runtime_error("Unexpected character");
 }
 
 template <typename Char, typename Traits>
-void basic_csv_istream<Char, Traits>::unexpected_eof()
-{
+void basic_csv_istream<Char, Traits>::unexpected_eof() {
     throw std::runtime_error("Unexpected end of input");
 }
 
 template <typename Char, typename Traits>
-bool basic_csv_istream<Char, Traits>::is_eof(char_type c)
-{
+bool basic_csv_istream<Char, Traits>::is_eof(char_type c) {
     return Traits::to_char_type(Traits::eof()) == c;
 }
-
-
-} }
+}
+}
 
 #endif

@@ -16,10 +16,10 @@ namespace csv {
 /**
  * @brief Represents a single row of a CSV file.
  */
-template < typename Char, typename Traits = std::char_traits<Char> >
-class basic_row : private std::vector< std::basic_string<Char, Traits> >
-{
-    typedef std::vector< std::basic_string<Char, Traits> > base;
+template <typename Char, typename Traits = std::char_traits<Char> >
+class basic_row : private std::vector<std::basic_string<Char, Traits> > {
+    typedef std::vector<std::basic_string<Char, Traits> > base;
+
 public:
     typedef typename base::value_type value_type;
 
@@ -39,9 +39,9 @@ public:
     explicit basic_row(std::size_t n = 0);
     explicit basic_row(basic_csv_istream<Char, Traits> &is);
 
-    bool operator==(const basic_row & rhs) const;
+    bool operator==(const basic_row &rhs) const;
 
-    bool operator!=(const basic_row & rhs) const { return !(*this == rhs); }
+    bool operator!=(const basic_row &rhs) const { return !(*this == rhs); }
 
     template <typename T>
     T as(std::size_t pos) const;
@@ -58,10 +58,10 @@ public:
 /// @details The class maintains a simple string -> index map based on
 /// a sorted vector. Cost of column index lookup is O(log(N)) where
 /// N is the column count.
-template < typename Char, typename Traits = std::char_traits<Char> >
-class basic_header
-{
+template <typename Char, typename Traits = std::char_traits<Char> >
+class basic_header {
     typedef std::vector<std::size_t> reverse_index;
+
 public:
     typedef Char char_type;
     typedef basic_row<Char, Traits> row_type;
@@ -70,20 +70,20 @@ public:
     static const std::size_t npos = std::size_t(-1);
 
     basic_header();
-    basic_header(basic_csv_istream<Char, Traits> & is);
-    basic_header(const row_type & row);
+    basic_header(basic_csv_istream<Char, Traits> &is);
+    basic_header(const row_type &row);
 
     /// @brief (Re)Initializes header with given row.
-    void assign(const row_type & row);
+    void assign(const row_type &row);
 
     /// @brief Returns name of the column with index <tt>i</tt>.
     const key_type &name_of(std::size_t i) const;
 
     /// @brief Returns index of the column with name <tt>key</tt>.
-    std::size_t index_of(const char_type * key) const;
+    std::size_t index_of(const char_type *key) const;
 
     /// @brief Returns index of the column with name <tt>key</tt>.
-    std::size_t index_of(const key_type & key) const;
+    std::size_t index_of(const key_type &key) const;
 
     /// @brief Returns number of columns.
     std::size_t size() const { return assocs_.size(); }
@@ -99,10 +99,10 @@ private:
 };
 
 /// @brief Extension of thes basic_row supporting string keys.
-template < typename Char, typename Traits = std::char_traits<Char> >
-class basic_map_row : public basic_row<Char, Traits>
-{
+template <typename Char, typename Traits = std::char_traits<Char> >
+class basic_map_row : public basic_row<Char, Traits> {
     typedef basic_row<Char, Traits> base;
+
 public:
     typedef basic_header<Char, Traits> header_type;
     typedef typename base::value_type value_type;
@@ -130,11 +130,11 @@ public:
     value_type &operator[](int i);
     const value_type &operator[](int i) const;
 
-    value_type & operator[](const key_type &key);
-    const value_type & operator[](const key_type &key) const;
+    value_type &operator[](const key_type &key);
+    const value_type &operator[](const key_type &key) const;
 
-    value_type & operator[](const char_type *key);
-    const value_type & operator[](const char_type *key) const;
+    value_type &operator[](const char_type *key);
+    const value_type &operator[](const char_type *key) const;
 
     const_iterator find(const key_type &key) const;
     const_iterator find(const char_type *key) const;
@@ -165,55 +165,45 @@ typedef basic_map_row<wchar_t> map_wrow;
  * implemented as vector of pairs.
  */
 template <typename Char, typename Traits>
-struct basic_header<Char, Traits>::by_key
-{
-    bool operator()(const assoc & lhs, const assoc & rhs) const
-    {
+struct basic_header<Char, Traits>::by_key {
+    bool operator()(const assoc &lhs, const assoc &rhs) const {
         return lhs.first < rhs.first;
     }
 
-    bool operator()(const assoc & a, const key_type & key) const
-    {
+    bool operator()(const assoc &a, const key_type &key) const {
         return a.first < key;
     }
 
-    bool operator()(const assoc & a, const char_type * key) const
-    {
+    bool operator()(const assoc &a, const char_type *key) const {
         return a.first < key;
     }
 
-    bool operator()(const key_type & key, const assoc & a) const
-    {
+    bool operator()(const key_type &key, const assoc &a) const {
         return key < a.first;
     }
 
-    bool operator()(const char_type * key, const assoc & a) const
-    {
+    bool operator()(const char_type *key, const assoc &a) const {
         return key < a.first;
     }
 };
 
 template <typename Char, typename Traits>
-basic_header<Char, Traits>::basic_header()
-{}
+basic_header<Char, Traits>::basic_header() {}
 
 template <typename Char, typename Traits>
-basic_header<Char, Traits>::basic_header(basic_csv_istream<Char, Traits>& is)
-{
+basic_header<Char, Traits>::basic_header(basic_csv_istream<Char, Traits> &is) {
     row_type tmp_row;
     is >> tmp_row;
     assign(tmp_row);
 }
 
 template <typename Char, typename Traits>
-basic_header<Char, Traits>::basic_header(const row_type& row)
-{
+basic_header<Char, Traits>::basic_header(const row_type &row) {
     assign(row);
 }
 
 template <typename Char, typename Traits>
-void basic_header<Char, Traits>::assign(const row_type& row)
-{
+void basic_header<Char, Traits>::assign(const row_type &row) {
     if (!assocs_.empty()) {
         assocs_.clear();
         r_index_.clear();
@@ -238,42 +228,37 @@ void basic_header<Char, Traits>::assign(const row_type& row)
 }
 
 template <typename Char, typename Traits>
-const typename basic_header<Char, Traits>::key_type&
-basic_header<Char, Traits>::name_of(std::size_t i) const
-{
+const typename basic_header<Char, Traits>::key_type &
+basic_header<Char, Traits>::name_of(std::size_t i) const {
     return assocs_[r_index_[i]].first;
 }
 
 template <typename Char, typename Traits>
-std::size_t basic_header<Char, Traits>::index_of(const key_type& key) const
-{
+std::size_t basic_header<Char, Traits>::index_of(const key_type &key) const {
     typename assocs::const_iterator i =
         std::lower_bound(assocs_.begin(), assocs_.end(), key, by_key());
     return i != assocs_.end() ? i->second : npos;
 }
 
 template <typename Char, typename Traits>
-std::size_t basic_header<Char, Traits>::index_of(const char_type* key) const
-{
+std::size_t basic_header<Char, Traits>::index_of(const char_type *key) const {
     typename assocs::const_iterator i =
         std::lower_bound(assocs_.begin(), assocs_.end(), key, by_key());
     return i != assocs_.end() ? i->second : npos;
 }
 
 template <typename Char, typename Traits>
-basic_row<Char, Traits>::basic_row(std::size_t n) : base(n)
-{}
+basic_row<Char, Traits>::basic_row(std::size_t n)
+    : base(n) {}
 
 template <typename Char, typename Traits>
-basic_row<Char, Traits>::basic_row(basic_csv_istream<Char, Traits> &is)
-{
+basic_row<Char, Traits>::basic_row(basic_csv_istream<Char, Traits> &is) {
     is >> *this;
 }
 
 template <typename Char, typename Traits>
 template <typename T>
-T basic_row<Char, Traits>::as(std::size_t pos) const
-{
+T basic_row<Char, Traits>::as(std::size_t pos) const {
     T sink;
     std::basic_stringstream<Char, Traits> s((*this)[pos]);
     s >> sink;
@@ -281,26 +266,21 @@ T basic_row<Char, Traits>::as(std::size_t pos) const
 }
 
 template <typename Char, typename Traits>
-bool basic_row<Char, Traits>::operator==(
-        const basic_row<Char, Traits> &rhs) const
-{
-    return static_cast<const base &>(*this) ==
-           static_cast<const base &>(rhs);
+bool basic_row<Char, Traits>::
+operator==(const basic_row<Char, Traits> &rhs) const {
+    return static_cast<const base &>(*this) == static_cast<const base &>(rhs);
 }
 
 template <typename Char, typename Traits>
-void basic_row<Char, Traits>::clear()
-{
+void basic_row<Char, Traits>::clear() {
     for (iterator i = begin(), e = end(); i != e; ++i) {
         i->clear();
     }
 }
 
 template <typename Char, typename Traits>
-basic_csv_ostream<Char, Traits> &
-operator<<(basic_csv_ostream<Char, Traits> & os,
-           const basic_row<Char, Traits> & row)
-{
+basic_csv_ostream<Char, Traits> &operator<<(
+    basic_csv_ostream<Char, Traits> &os, const basic_row<Char, Traits> &row) {
     for (std::size_t i = 0, n = row.size(); i < n; ++i) {
         os << row[i];
     }
@@ -309,13 +289,12 @@ operator<<(basic_csv_ostream<Char, Traits> & os,
 }
 
 template <typename Char, typename Traits>
-std::basic_ostream<Char, Traits> &
-operator<<(std::basic_ostream<Char, Traits> & os,
-           const basic_row<Char, Traits> & row)
-{
+std::basic_ostream<Char, Traits> &operator<<(
+    std::basic_ostream<Char, Traits> &os, const basic_row<Char, Traits> &row) {
     os << "row{";
     for (std::size_t i = 0, n = row.size(); i < n; ++i) {
-        if (i != 0) os << ",";
+        if (i != 0)
+            os << ",";
         os << "{" << row[i] << "}";
     }
     os << "}";
@@ -323,10 +302,8 @@ operator<<(std::basic_ostream<Char, Traits> & os,
 }
 
 template <typename Char, typename Traits>
-basic_csv_istream<Char, Traits> &
-operator>>(basic_csv_istream<Char, Traits> & is,
-           basic_row<Char, Traits> & row)
-{
+basic_csv_istream<Char, Traits> &operator>>(basic_csv_istream<Char, Traits> &is,
+                                            basic_row<Char, Traits> &row) {
 
     row.clear();
 
@@ -356,81 +333,69 @@ operator>>(basic_csv_istream<Char, Traits> & is,
 
 template <typename Char, typename Traits>
 basic_map_row<Char, Traits>::basic_map_row(
-        typename basic_map_row<Char, Traits>::header_type header)
+    typename basic_map_row<Char, Traits>::header_type header)
     : basic_map_row<Char, Traits>::base(header.size())
-    , header_(std::move(header))
-{}
+    , header_(std::move(header)) {}
 
 #else
 
 template <typename Char, typename Traits>
 basic_map_row<Char, Traits>::basic_map_row(
-        const typename basic_map_row<Char, Traits>::header_type &header)
+    const typename basic_map_row<Char, Traits>::header_type &header)
     : basic_map_row<Char, Traits>::base(header.size())
-    , header_(header)
-{}
+    , header_(header) {}
 
 #endif
 
 template <typename Char, typename Traits>
-basic_map_row<Char, Traits>::basic_map_row(
-        basic_csv_istream<Char, Traits> &is)
-    : header_(is)
-{
+basic_map_row<Char, Traits>::basic_map_row(basic_csv_istream<Char, Traits> &is)
+    : header_(is) {
     is >> *this;
 }
 
 template <typename Char, typename Traits>
-typename basic_map_row<Char, Traits>::value_type &
-basic_map_row<Char, Traits>::operator[](int i)
-{
+typename basic_map_row<Char, Traits>::value_type &basic_map_row<Char, Traits>::
+operator[](int i) {
     return (*this)[std::size_t(i)];
 }
 
 template <typename Char, typename Traits>
 const typename basic_map_row<Char, Traits>::value_type &
-basic_map_row<Char, Traits>::operator[](int i) const
-{
+basic_map_row<Char, Traits>::
+operator[](int i) const {
     return (*this)[std::size_t(i)];
 }
 
 template <typename Char, typename Traits>
-typename basic_map_row<Char, Traits>::value_type &
-basic_map_row<Char, Traits>::operator[](
-        const typename basic_map_row<Char, Traits>::key_type &key)
-{
+typename basic_map_row<Char, Traits>::value_type &basic_map_row<Char, Traits>::
+operator[](const typename basic_map_row<Char, Traits>::key_type &key) {
     return at(header_.index_of(key));
 }
 
 template <typename Char, typename Traits>
 const typename basic_map_row<Char, Traits>::value_type &
-basic_map_row<Char, Traits>::operator[](
-        const typename basic_map_row<Char, Traits>::key_type &key) const
-{
+basic_map_row<Char, Traits>::
+operator[](const typename basic_map_row<Char, Traits>::key_type &key) const {
     return at(header_.index_of(key));
 }
 
 template <typename Char, typename Traits>
-typename basic_map_row<Char, Traits>::value_type &
-basic_map_row<Char, Traits>::operator[](
-        const typename basic_map_row<Char, Traits>::char_type *key)
-{
+typename basic_map_row<Char, Traits>::value_type &basic_map_row<Char, Traits>::
+operator[](const typename basic_map_row<Char, Traits>::char_type *key) {
     return at(header_.index_of(key));
 }
 
 template <typename Char, typename Traits>
 const typename basic_map_row<Char, Traits>::value_type &
-basic_map_row<Char, Traits>::operator[](
-        const typename basic_map_row<Char, Traits>::char_type *key) const
-{
+basic_map_row<Char, Traits>::
+operator[](const typename basic_map_row<Char, Traits>::char_type *key) const {
     return at(header_.index_of(key));
 }
 
 template <typename Char, typename Traits>
 typename basic_map_row<Char, Traits>::const_iterator
 basic_map_row<Char, Traits>::find(
-        const typename basic_map_row<Char, Traits>::key_type &key) const
-{
+    const typename basic_map_row<Char, Traits>::key_type &key) const {
     const std::size_t idx = header_.index_of(key);
     return idx != header_type::npos ? base::begin() + idx : base::end();
 }
@@ -438,8 +403,7 @@ basic_map_row<Char, Traits>::find(
 template <typename Char, typename Traits>
 typename basic_map_row<Char, Traits>::const_iterator
 basic_map_row<Char, Traits>::find(
-        const typename basic_map_row<Char, Traits>::char_type *key) const
-{
+    const typename basic_map_row<Char, Traits>::char_type *key) const {
     const std::size_t idx = header_.index_of(key);
     return idx != header_type::npos ? base::begin() + idx : base::end();
 }
@@ -447,8 +411,7 @@ basic_map_row<Char, Traits>::find(
 template <typename Char, typename Traits>
 template <typename T>
 T basic_map_row<Char, Traits>::as(
-        const typename basic_map_row<Char, Traits>::key_type &key) const
-{
+    const typename basic_map_row<Char, Traits>::key_type &key) const {
     T sink;
     std::basic_stringstream<Char, Traits> is((*this)[key]);
     is >> sink;
@@ -458,8 +421,7 @@ T basic_map_row<Char, Traits>::as(
 template <typename Char, typename Traits>
 template <typename T>
 T basic_map_row<Char, Traits>::as(
-        const typename basic_map_row<Char, Traits>::char_type *key) const
-{
+    const typename basic_map_row<Char, Traits>::char_type *key) const {
     T sink;
     std::basic_stringstream<Char, Traits> is((*this)[key]);
     is >> sink;
@@ -468,11 +430,10 @@ T basic_map_row<Char, Traits>::as(
 
 template <typename Char, typename Traits>
 bool basic_map_row<Char, Traits>::has_key(
-        const basic_map_row<Char, Traits>::key_type &key) const
-{
+    const basic_map_row<Char, Traits>::key_type &key) const {
     return header_.index_of(key) != header_type::npos;
 }
-
-} }
+}
+}
 
 #endif

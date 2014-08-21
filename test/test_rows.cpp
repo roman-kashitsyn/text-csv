@@ -7,25 +7,27 @@ namespace csv = ::text::csv;
 
 BOOST_AUTO_TEST_SUITE(csv_rows)
 
-BOOST_AUTO_TEST_CASE(row_parsing_test)
-{
+BOOST_AUTO_TEST_CASE(row_parsing_test) {
     std::istringstream ss("\"a\",\"b\",\"c\"\nd,e,f");
     csv::csv_istream csv_in(ss);
     csv::row r(3), p;
 
     csv_in >> p;
-    r[0] = "a"; r[1] = "b"; r[2] = "c";
+    r[0] = "a";
+    r[1] = "b";
+    r[2] = "c";
     BOOST_CHECK_EQUAL(r, p);
 
     csv_in >> p;
-    r[0] = "d"; r[1] = "e"; r[2] = "f";
+    r[0] = "d";
+    r[1] = "e";
+    r[2] = "f";
     BOOST_CHECK_EQUAL(r, p);
 
     BOOST_CHECK(!csv_in);
 }
 
-BOOST_AUTO_TEST_CASE(map_row_lookup_test)
-{
+BOOST_AUTO_TEST_CASE(map_row_lookup_test) {
     const std::size_t n = 3;
     csv::row first_row(n);
     first_row[0] = "name";
