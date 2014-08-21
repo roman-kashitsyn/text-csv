@@ -106,6 +106,15 @@ BOOST_AUTO_TEST_CASE(numbers_with_commas)
     BOOST_CHECK_EQUAL(os.str(), "\"1,000,000\",\"20,000\",100\r\n");
 }
 
+BOOST_AUTO_TEST_CASE(line_break_in_field)
+{
+    std::ostringstream os;
+    csv::csv_ostream csv_out(os);
+
+    csv_out << "\r\n" << "\r" << "\n";
+    BOOST_CHECK_EQUAL(os.str(), "\"\r\n\",\"\r\",\"\n\"");
+}
+
 BOOST_AUTO_TEST_CASE(empty_cells_test)
 {
     std::ostringstream os;

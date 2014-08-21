@@ -1,7 +1,8 @@
 #ifndef TEXT_CSV_OSTREAM_HPP
 #define TEXT_CSV_OSTREAM_HPP
 
-#include "text/csv/stream_fwd.hpp"
+#include "stream_fwd.hpp"
+#include <algorithm>
 #include <ostream>
 #include <string>
 #include <sstream>
@@ -156,15 +157,15 @@ basic_csv_ostream<Char, Traits>::insert(char_type const * begin,
 {
     insert_delimiter();
 
-    bool has_delim = false;
-    for (char_type const * pos = begin; pos != end; ++pos) {
-        if (*pos == delim_) {
-            has_delim = true;
-            break;
-        }
-    }
+    const char_type special_symbols[] = {delim_, os_.widen(CR), os_.widen(LF) };
+    const char_type * const special_symbols_end
+        = special_symbols + sizeof(special_symbols) / sizeof(special_symbols[0]);
 
-    if (!has_delim) {
+    const bool has_special_symbols
+        = std::find_first_of(begin, end, special_symbols, special_symbols_end) != end;
+
+
+    if (!has_special_symbols) {
         os_.write(begin, std::streamsize(end - begin));
     } else {
         os_.put(quote_);
