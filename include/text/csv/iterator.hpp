@@ -1,7 +1,12 @@
 #ifndef TEXT_CSV_ITERATOR_HPP
 #define TEXT_CSV_ITERATOR_HPP
 
-#include "text/csv/rows.hpp"
+//          Copyright Roman Kashitsyn 2014 - 2015.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#include "rows.hpp"
 #include <utility>
 #include <iterator>
 
@@ -397,7 +402,7 @@ void zipping_iterator<MapRow>::load() {
         value_.second.clear();
     }
 }
-}
-}
+} // namespace csv
+} // namespace text
 
 #endif

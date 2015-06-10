@@ -14,7 +14,7 @@ if (Boost_FOUND)
     test/test_ranges.cpp
     )
   target_link_libraries(csv_test
-    boost_unit_test_framework
+    ${Boost_LIBRARIES}
     )
   set_target_properties(csv_test
     PROPERTIES

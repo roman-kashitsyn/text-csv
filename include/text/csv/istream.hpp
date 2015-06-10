@@ -1,7 +1,12 @@
 #ifndef TEXT_CSV_ISTREAM_HPP
 #define TEXT_CSV_ISTREAM_HPP
 
-#include "text/csv/stream_fwd.hpp"
+//          Copyright Roman Kashitsyn 2014 - 2015.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
+#include "stream_fwd.hpp"
 #include <istream>
 #include <string>
 #include <stdexcept>
@@ -261,7 +266,7 @@ template <typename Char, typename Traits>
 bool basic_csv_istream<Char, Traits>::is_eof(char_type c) {
     return Traits::to_char_type(Traits::eof()) == c;
 }
-}
-}
+} // namespace csv
+} // namespace text
 
 #endif

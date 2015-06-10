@@ -1,6 +1,11 @@
 #ifndef TEXT_CSV_OSTREAM_HPP
 #define TEXT_CSV_OSTREAM_HPP
 
+//          Copyright Roman Kashitsyn 2014 - 2015.
+// Distributed under the Boost Software License, Version 1.0.
+//    (See accompanying file LICENSE_1_0.txt or copy at
+//          http://www.boost.org/LICENSE_1_0.txt)
+
 #include "stream_fwd.hpp"
 #include <algorithm>
 #include <ostream>
@@ -164,7 +169,7 @@ basic_csv_ostream<Char, Traits>::insert(char_type const *begin,
     }
     return *this;
 }
-}
-}
+} // namespace csv
+} // namespace text
 
 #endif
