@@ -243,6 +243,7 @@ Char basic_csv_istream<Char, Traits>::peek_char() {
 
 template <typename Char, typename Traits>
 void basic_csv_istream<Char, Traits>::skip_char() {
+    pos_ += 1;
     is_.ignore();
 }
 

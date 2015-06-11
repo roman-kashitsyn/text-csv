@@ -123,6 +123,27 @@ BOOST_AUTO_TEST_CASE(simple_grid_in_test) {
     generic_input_test(text, parts);
 }
 
+BOOST_AUTO_TEST_CASE(istream_position_test) {
+    std::istringstream ss("\"abc\",\"b\"\r\n\"c\",\"dfg\"");
+    std::string s;
+    csv::csv_istream csvin(ss);
+
+    unsigned lines[] = {1, 2, 2, 2};
+    unsigned cols[] = {6, 0, 4, 10};
+    const char* values[] = {"abc", "b", "c", "dfg"};
+
+    BOOST_CHECK_EQUAL(1, csvin.line_number());
+    BOOST_CHECK_EQUAL(0, csvin.column_number());
+
+    for (unsigned i = 0; i < sizeof(lines)/sizeof(lines[0]); ++i) {
+        csvin >> s;
+
+        BOOST_CHECK_EQUAL(values[i], s);
+        BOOST_CHECK_EQUAL(lines[i], csvin.line_number());
+        BOOST_CHECK_EQUAL(cols[i], csvin.column_number());
+    }
+}
+
 BOOST_AUTO_TEST_CASE(custom_delimiter_test) {
     const char *parts[] = { "a", "b", "c" };
     const char *const text = "a|b|c";
