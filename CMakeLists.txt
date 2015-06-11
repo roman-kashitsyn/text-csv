@@ -3,6 +3,8 @@ project(test-csv)
 
 include_directories(include)
 
+enable_testing()
+
 find_package(Boost
   COMPONENTS unit_test_framework)
 
@@ -16,11 +18,16 @@ if (Boost_FOUND)
   target_link_libraries(csv_test
     ${Boost_LIBRARIES}
     )
-  set_target_properties(csv_test
-    PROPERTIES
-    COMPILE_FLAGS
-    "-Wall -Wextra -Werror"
-    )
+
+  add_test(basic_test csv_test)
+
+  if (CMAKE_COMPILER_IS_GNUCXX)
+    set_target_properties(csv_test
+      PROPERTIES
+      COMPILE_FLAGS
+      "-Wall -Wextra -Werror"
+      )
+  endif()
 endif()
 
 install(

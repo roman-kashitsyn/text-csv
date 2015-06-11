@@ -1,0 +1,9 @@
+install: apt-get install libboost-test-dev
+
+language: cpp
+
+compiler:
+  - clang
+  - gcc
+
+script: cmake && make && make test
