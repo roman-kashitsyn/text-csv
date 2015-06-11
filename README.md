@@ -1,6 +1,8 @@
 C++ CSV read/write library
 ==========================
 
+[![Build Status](https://travis-ci.org/roman-kashitsyn/text-csv.svg)](https://travis-ci.org/roman-kashitsyn/text-csv)
+
 Properties:
 
 * RFC-4180 compliant
@@ -83,3 +85,9 @@ Examples:
     // Copy a single row into vector
     std::copy(I(csvs), I(), std::back_inserter(vec));
 ```
+
+License
+=======
+
+The library is licensed under permissive Boost license. See file
+`LICENSE_1_0.txt` for details.
