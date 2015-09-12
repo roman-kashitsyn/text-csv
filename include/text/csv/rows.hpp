@@ -316,12 +316,12 @@ basic_csv_istream<Char, Traits> &operator>>(basic_csv_istream<Char, Traits> &is,
     std::size_t i = 0;
     typename basic_row<Char, Traits>::value_type field;
 
-    while (is && is.has_more_fields() && i < size) {
+    while (is.good() && is.has_more_fields() && i < size) {
         is >> field;
         row[i++] = field;
     }
 
-    while (is && is.has_more_fields()) {
+    while (is.good() && is.has_more_fields()) {
         is >> field;
         row.push_back(field);
         ++i;

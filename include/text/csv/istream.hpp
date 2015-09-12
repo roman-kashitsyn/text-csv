@@ -81,6 +81,8 @@ public:
 
     bool eof() { return is_eof(peek_char()); }
 
+    bool good() const { return is_.good(); }
+
     operator bool() { return is_.good() && !eof(); }
 
     bool has_more_fields() const { return more_fields_; }

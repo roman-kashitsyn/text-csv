@@ -199,6 +199,12 @@ BOOST_AUTO_TEST_CASE(mixed_line_endings_in_input) {
     generic_input_test(text, parts);
 }
 
+BOOST_AUTO_TEST_CASE(empty_field_at_the_end) {
+    const char *parts[] = {"1", "2", ""};
+    const char *const text = "1,2,";
+    generic_input_test(text, parts);
+}
+
 BOOST_AUTO_TEST_CASE(line_splitting) {
     std::istringstream is("1,2\n3,4\n5,6\n");
     csv::csv_istream csv_in(is);

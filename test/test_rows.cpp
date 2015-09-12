@@ -7,6 +7,12 @@ namespace csv = ::text::csv;
 
 BOOST_AUTO_TEST_SUITE(csv_rows)
 
+static void string_to_row(const char *text, csv::row &r) {
+    std::istringstream ss(text);
+    csv::csv_istream csv_in(ss);
+    csv_in >> r;
+}
+
 BOOST_AUTO_TEST_CASE(row_parsing_test) {
     std::istringstream ss("\"a\",\"b\",\"c\"\nd,e,f");
     csv::csv_istream csv_in(ss);
@@ -25,6 +31,38 @@ BOOST_AUTO_TEST_CASE(row_parsing_test) {
     BOOST_CHECK_EQUAL(r, p);
 
     BOOST_CHECK(!csv_in);
+}
+
+BOOST_AUTO_TEST_CASE(row_with_empty_field) {
+    csv::row r;
+    string_to_row("1,2,", r);
+
+    BOOST_ASSERT(3 == r.size());
+    BOOST_CHECK_EQUAL("1", r[0]);
+    BOOST_CHECK_EQUAL("2", r[1]);
+    BOOST_CHECK_EQUAL("", r[2]);
+}
+
+BOOST_AUTO_TEST_CASE(row_narrows_and_expands) {
+    csv::row r;
+    string_to_row("1,2,3", r);
+    BOOST_ASSERT(3 == r.size());
+
+    string_to_row("4,5", r);
+    BOOST_ASSERT(2 == r.size());
+    BOOST_CHECK_EQUAL("4", r[0]);
+    BOOST_CHECK_EQUAL("5", r[1]);
+
+    string_to_row("6,7,8,9", r);
+    BOOST_ASSERT(4 == r.size());
+    BOOST_CHECK_EQUAL("6", r[0]);
+    BOOST_CHECK_EQUAL("7", r[1]);
+    BOOST_CHECK_EQUAL("8", r[2]);
+    BOOST_CHECK_EQUAL("9", r[3]);
+
+    string_to_row("", r);
+    BOOST_ASSERT(1 == r.size());
+    BOOST_CHECK_EQUAL("", r[0]);
 }
 
 BOOST_AUTO_TEST_CASE(map_row_lookup_test) {
