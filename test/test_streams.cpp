@@ -61,17 +61,26 @@ BOOST_AUTO_TEST_CASE(strings_with_quotes_and_commas) {
     csv_out << "Hello, how are you?" << 3 << 4 << csv::endl;
     csv_out << "Delim , and \"quotes\"" << csv::endl;
 
-    BOOST_CHECK_EQUAL(os.str(), "1, \" Hello \" ,1.5\r\n"
+    BOOST_CHECK_EQUAL(os.str(), "1,\" \"\" Hello \"\" \",1.5\r\n"
                                 "\"Hello, how are you?\",3,4\r\n"
                                 "\"Delim , and \"\"quotes\"\"\"\r\n");
 }
 
+BOOST_AUTO_TEST_CASE(strings_with_double_quotes) {
+    std::ostringstream os;
+    csv::csv_ostream csv_out(os);
+    csv_out << "\"\"Double Quotes\"\"" << csv::endl;
+    BOOST_CHECK_EQUAL(os.str(), "\"\"\"\"\"Double Quotes\"\"\"\"\"\r\n");
+}
+
 BOOST_AUTO_TEST_CASE(read_quoted) {
-    std::istringstream is("abc,\"Delim , and \"\"quotes\"\"\"");
+    std::istringstream is(
+        "abc,\"\"\"\"\"Double Quotes\"\"\"\"\",\"Delim , and \"\"quotes\"\"\"");
     csv::csv_istream csv_in(is);
-    std::string left, right;
-    csv_in >> left >> right;
+    std::string left, middle, right;
+    csv_in >> left >> middle >> right;
     BOOST_CHECK_EQUAL(left, "abc");
+    BOOST_CHECK_EQUAL(middle, "\"\"Double Quotes\"\"");
     BOOST_CHECK_EQUAL(right, "Delim , and \"quotes\"");
 }
 

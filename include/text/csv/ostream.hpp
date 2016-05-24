@@ -146,8 +146,9 @@ basic_csv_ostream<Char, Traits>::insert(char_type const *begin,
                                         char_type const *end) {
     insert_delimiter();
 
-    const char_type special_symbols[] = { delim_, os_.widen(CR),
-                                          os_.widen(LF) };
+    const char_type special_symbols[] = {
+        delim_, quote_, os_.widen(CR), os_.widen(LF),
+    };
     const char_type *const special_symbols_end =
         special_symbols + sizeof(special_symbols) / sizeof(special_symbols[0]);
 
