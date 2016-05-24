@@ -60,10 +60,12 @@ BOOST_AUTO_TEST_CASE(strings_with_quotes_and_commas) {
     csv_out << 1 << " \" Hello \" " << 1.5 << csv::endl;
     csv_out << "Hello, how are you?" << 3 << 4 << csv::endl;
     csv_out << "Delim , and \"quotes\"" << csv::endl;
+    csv_out << "aaa" << "\"" << "bbb" << csv::endl;
 
     BOOST_CHECK_EQUAL(os.str(), "1,\" \"\" Hello \"\" \",1.5\r\n"
                                 "\"Hello, how are you?\",3,4\r\n"
-                                "\"Delim , and \"\"quotes\"\"\"\r\n");
+                                "\"Delim , and \"\"quotes\"\"\"\r\n"
+                                "aaa,\"\"\"\",bbb\r\n");
 }
 
 BOOST_AUTO_TEST_CASE(strings_with_double_quotes) {
