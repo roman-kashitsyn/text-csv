@@ -65,6 +65,18 @@ BOOST_AUTO_TEST_CASE(row_narrows_and_expands) {
     BOOST_CHECK_EQUAL("", r[0]);
 }
 
+BOOST_AUTO_TEST_CASE(header_index_lookup) {
+  std::istringstream ss("Employee,Salary,Department\n");
+  csv::csv_istream csv_in(ss);
+  text::csv::header h(csv_in);
+  BOOST_CHECK_EQUAL(h.index_of("Employee"), 0);
+  BOOST_CHECK_EQUAL(h.index_of("Salary"), 1);
+  BOOST_CHECK_EQUAL(h.index_of("Department"), 2);
+  BOOST_CHECK_EQUAL(h.index_of("A"), text::csv::header::npos);
+  BOOST_CHECK_EQUAL(h.index_of("Manager"), text::csv::header::npos);
+  BOOST_CHECK_EQUAL(h.index_of("Z"), text::csv::header::npos);
+}
+
 BOOST_AUTO_TEST_CASE(map_row_lookup_test) {
     const std::size_t n = 3;
     csv::row first_row(n);

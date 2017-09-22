@@ -72,7 +72,7 @@ public:
     typedef basic_row<Char, Traits> row_type;
     typedef std::basic_string<Char, Traits> key_type;
 
-    static const std::size_t npos = std::size_t(-1);
+    static const std::size_t npos;
 
     basic_header();
     basic_header(basic_csv_istream<Char, Traits> &is);
@@ -102,6 +102,9 @@ private:
     assocs assocs_;
     reverse_index r_index_;
 };
+
+template <typename Char, typename Traits>
+const size_t basic_header<Char, Traits>::npos = static_cast<std::size_t>(-1);
 
 /// @brief Extension of thes basic_row supporting string keys.
 template <typename Char, typename Traits = std::char_traits<Char> >
@@ -242,14 +245,14 @@ template <typename Char, typename Traits>
 std::size_t basic_header<Char, Traits>::index_of(const key_type &key) const {
     typename assocs::const_iterator i =
         std::lower_bound(assocs_.begin(), assocs_.end(), key, by_key());
-    return i != assocs_.end() ? i->second : npos;
+    return (i != assocs_.end() && i->first == key) ? i->second : npos;
 }
 
 template <typename Char, typename Traits>
 std::size_t basic_header<Char, Traits>::index_of(const char_type *key) const {
     typename assocs::const_iterator i =
         std::lower_bound(assocs_.begin(), assocs_.end(), key, by_key());
-    return i != assocs_.end() ? i->second : npos;
+    return (i != assocs_.end() && i->first == key) ? i->second : npos;
 }
 
 template <typename Char, typename Traits>
