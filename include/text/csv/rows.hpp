@@ -292,7 +292,7 @@ basic_csv_ostream<Char, Traits> &operator<<(
     for (std::size_t i = 0, n = row.size(); i < n; ++i) {
         os << row[i];
     }
-    os.next_line();
+    os.end_line();
     return os;
 }
 
