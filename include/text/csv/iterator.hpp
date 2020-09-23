@@ -103,9 +103,9 @@ public:
         : range_ptr_(0)
         , row_ptr_(0) {}
 
-    input_row_iterator(range_type &range, value_type &row)
+    input_row_iterator(range_type &range, value_type &aRow)
         : range_ptr_(&range)
-        , row_ptr_(&row) {}
+        , row_ptr_(&aRow) {}
 
     input_row_iterator &operator++() {
         advance();
@@ -254,13 +254,13 @@ private:
 };
 
 template <typename MapRow>
-zipping_iterator<MapRow> pairs_begin(const MapRow &row) {
-    return zipping_iterator<MapRow>(row, 0);
+zipping_iterator<MapRow> pairs_begin(const MapRow &aRow) {
+    return zipping_iterator<MapRow>(aRow, 0);
 }
 
 template <typename MapRow>
-zipping_iterator<MapRow> pairs_end(const MapRow &row) {
-    return zipping_iterator<MapRow>(row, row.size());
+zipping_iterator<MapRow> pairs_end(const MapRow &aRow) {
+    return zipping_iterator<MapRow>(aRow, aRow.size());
 }
 
 typedef basic_row_range<char> row_range;
@@ -316,8 +316,8 @@ bool input_column_iterator<ValueType, Char, Traits>::equals(
 }
 
 template <typename MapRow>
-zipping_iterator<MapRow>::zipping_iterator(const MapRow &row, std::size_t pos)
-    : row_(&row)
+zipping_iterator<MapRow>::zipping_iterator(const MapRow &aRow, std::size_t pos)
+    : row_(&aRow)
     , value_()
     , pos_(pos)
 {
