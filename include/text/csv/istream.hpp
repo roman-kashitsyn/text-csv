@@ -235,12 +235,12 @@ void basic_csv_istream<Char, Traits>::next_line() {
 template <typename Char, typename Traits>
 Char basic_csv_istream<Char, Traits>::get_char() {
     pos_ += 1;
-    return is_.get();
+    return static_cast<Char>(is_.get());
 }
 
 template <typename Char, typename Traits>
 Char basic_csv_istream<Char, Traits>::peek_char() {
-    return is_.peek();
+    return static_cast<Char>(is_.peek());
 }
 
 template <typename Char, typename Traits>
