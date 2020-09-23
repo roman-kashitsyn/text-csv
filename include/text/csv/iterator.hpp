@@ -274,7 +274,7 @@ template < typename ValueType
          , typename Traits
          >
 input_column_iterator<ValueType, Char, Traits>::input_column_iterator()
-    : is_(0)
+    : is_(nullptr)
     , value_()
     , pending_end_(false)
 {}
@@ -295,7 +295,7 @@ input_column_iterator<ValueType, Char, Traits>::input_column_iterator(
 template <typename ValueType, typename Char, typename Traits>
 void input_column_iterator<ValueType, Char, Traits>::advance() {
     if (pending_end_) {
-        is_ = 0;
+        is_ = nullptr;
         return;
     }
 
@@ -310,7 +310,7 @@ void input_column_iterator<ValueType, Char, Traits>::advance() {
 template <typename ValueType, typename Char, typename Traits>
 bool input_column_iterator<ValueType, Char, Traits>::equals(
     const input_column_iterator<ValueType, Char, Traits> &rhs) const {
-    if (is_ == 0 && rhs.is_ == 0)
+    if (is_ == nullptr && rhs.is_ == nullptr)
         return true;
     return is_ == rhs.is_ && value_ == rhs.value_;
 }
