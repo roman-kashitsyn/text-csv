@@ -206,25 +206,25 @@ basic_header<Char, Traits>::basic_header(basic_csv_istream<Char, Traits> &is) {
 }
 
 template <typename Char, typename Traits>
-basic_header<Char, Traits>::basic_header(const row_type &row) {
-    assign(row);
+basic_header<Char, Traits>::basic_header(const row_type &aRow) {
+    assign(aRow);
 }
 
 template <typename Char, typename Traits>
-void basic_header<Char, Traits>::assign(const row_type &row) {
+void basic_header<Char, Traits>::assign(const row_type &aRow) {
     if (!assocs_.empty()) {
         assocs_.clear();
         r_index_.clear();
     }
 
-    const std::size_t n = row.size();
+    const std::size_t n = aRow.size();
 
     assocs_.reserve(n);
     for (std::size_t i = 0; i < n; ++i) {
 #if __cplusplus >= 201103
-        assocs_.emplace_back(row[i], i);
+        assocs_.emplace_back(aRow[i], i);
 #else
-        assocs_.push_back(assoc(row[i], i));
+        assocs_.push_back(assoc(aRow[i], i));
 #endif
     }
     std::sort(assocs_.begin(), assocs_.end(), by_key());
@@ -288,9 +288,9 @@ void basic_row<Char, Traits>::clear() {
 
 template <typename Char, typename Traits>
 basic_csv_ostream<Char, Traits> &operator<<(
-    basic_csv_ostream<Char, Traits> &os, const basic_row<Char, Traits> &row) {
-    for (std::size_t i = 0, n = row.size(); i < n; ++i) {
-        os << row[i];
+    basic_csv_ostream<Char, Traits> &os, const basic_row<Char, Traits> &aRow) {
+    for (std::size_t i = 0, n = aRow.size(); i < n; ++i) {
+        os << aRow[i];
     }
     os.end_line();
     return os;
@@ -298,12 +298,12 @@ basic_csv_ostream<Char, Traits> &operator<<(
 
 template <typename Char, typename Traits>
 std::basic_ostream<Char, Traits> &operator<<(
-    std::basic_ostream<Char, Traits> &os, const basic_row<Char, Traits> &row) {
+    std::basic_ostream<Char, Traits> &os, const basic_row<Char, Traits> &aRow) {
     os << "row{";
-    for (std::size_t i = 0, n = row.size(); i < n; ++i) {
+    for (std::size_t i = 0, n = aRow.size(); i < n; ++i) {
         if (i != 0)
             os << ",";
-        os << "{" << row[i] << "}";
+        os << "{" << aRow[i] << "}";
     }
     os << "}";
     return os;
@@ -311,28 +311,28 @@ std::basic_ostream<Char, Traits> &operator<<(
 
 template <typename Char, typename Traits>
 basic_csv_istream<Char, Traits> &operator>>(basic_csv_istream<Char, Traits> &is,
-                                            basic_row<Char, Traits> &row) {
+                                            basic_row<Char, Traits> &aRow) {
 
-    row.clear();
+    aRow.clear();
 
-    const std::size_t size = row.size();
+    const std::size_t size = aRow.size();
     std::size_t i = 0;
     typename basic_row<Char, Traits>::value_type field;
 
     while (is.good() && is.has_more_fields() && i < size) {
         is >> field;
-        row[i++] = field;
+        aRow[i++] = field;
     }
 
     while (is.good() && is.has_more_fields()) {
         is >> field;
-        row.push_back(field);
+        aRow.push_back(field);
         ++i;
     }
 
     is.has_more_fields(true);
 
-    row.resize(i);
+    aRow.resize(i);
 
     return is;
 }
@@ -341,9 +341,9 @@ basic_csv_istream<Char, Traits> &operator>>(basic_csv_istream<Char, Traits> &is,
 
 template <typename Char, typename Traits>
 basic_map_row<Char, Traits>::basic_map_row(
-    typename basic_map_row<Char, Traits>::header_type header)
-    : basic_map_row<Char, Traits>::base(header.size())
-    , header_(std::move(header)) {}
+    typename basic_map_row<Char, Traits>::header_type aHeader)
+    : basic_map_row<Char, Traits>::base(aHeader.size())
+    , header_(std::move(aHeader)) {}
 
 #else
 
