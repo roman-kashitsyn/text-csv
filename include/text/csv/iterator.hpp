@@ -39,6 +39,10 @@ public:
         return tmp;
     }
 
+    input_column_iterator(const input_column_iterator &other) : is_(other.is_), value_(other.value_), pending_end_(other.pending_end_) {};
+
+    input_column_iterator &operator=(const input_column_iterator &other) = delete;
+
     bool operator==(const input_column_iterator &rhs) const {
         return equals(rhs);
     }
@@ -83,7 +87,7 @@ public:
 
     output_column_iterator &operator++() { return *this; }
 
-    output_column_iterator &operator++(int) { return *this; }
+    output_column_iterator operator++(int) { return *this; }
 
 private:
     ostream_type &is_;
