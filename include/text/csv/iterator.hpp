@@ -39,6 +39,10 @@ public:
         return tmp;
     }
 
+    input_column_iterator(const input_column_iterator &other) : is_(other.is_), value_(other.value_), pending_end_(other.pending_end_) {};
+
+    input_column_iterator &operator=(const input_column_iterator &other) = delete;
+
     bool operator==(const input_column_iterator &rhs) const {
         return equals(rhs);
     }
@@ -83,7 +87,7 @@ public:
 
     output_column_iterator &operator++() { return *this; }
 
-    output_column_iterator &operator++(int) { return *this; }
+    output_column_iterator operator++(int) { return *this; }
 
 private:
     ostream_type &is_;
@@ -103,9 +107,9 @@ public:
         : range_ptr_(0)
         , row_ptr_(0) {}
 
-    input_row_iterator(range_type &range, value_type &row)
+    input_row_iterator(range_type &range, value_type &aRow)
         : range_ptr_(&range)
-        , row_ptr_(&row) {}
+        , row_ptr_(&aRow) {}
 
     input_row_iterator &operator++() {
         advance();
@@ -254,13 +258,13 @@ private:
 };
 
 template <typename MapRow>
-zipping_iterator<MapRow> pairs_begin(const MapRow &row) {
-    return zipping_iterator<MapRow>(row, 0);
+zipping_iterator<MapRow> pairs_begin(const MapRow &aRow) {
+    return zipping_iterator<MapRow>(aRow, 0);
 }
 
 template <typename MapRow>
-zipping_iterator<MapRow> pairs_end(const MapRow &row) {
-    return zipping_iterator<MapRow>(row, row.size());
+zipping_iterator<MapRow> pairs_end(const MapRow &aRow) {
+    return zipping_iterator<MapRow>(aRow, aRow.size());
 }
 
 typedef basic_row_range<char> row_range;
@@ -274,7 +278,7 @@ template < typename ValueType
          , typename Traits
          >
 input_column_iterator<ValueType, Char, Traits>::input_column_iterator()
-    : is_(0)
+    : is_(nullptr)
     , value_()
     , pending_end_(false)
 {}
@@ -295,7 +299,7 @@ input_column_iterator<ValueType, Char, Traits>::input_column_iterator(
 template <typename ValueType, typename Char, typename Traits>
 void input_column_iterator<ValueType, Char, Traits>::advance() {
     if (pending_end_) {
-        is_ = 0;
+        is_ = nullptr;
         return;
     }
 
@@ -310,14 +314,14 @@ void input_column_iterator<ValueType, Char, Traits>::advance() {
 template <typename ValueType, typename Char, typename Traits>
 bool input_column_iterator<ValueType, Char, Traits>::equals(
     const input_column_iterator<ValueType, Char, Traits> &rhs) const {
-    if (is_ == 0 && rhs.is_ == 0)
+    if (is_ == nullptr && rhs.is_ == nullptr)
         return true;
     return is_ == rhs.is_ && value_ == rhs.value_;
 }
 
 template <typename MapRow>
-zipping_iterator<MapRow>::zipping_iterator(const MapRow &row, std::size_t pos)
-    : row_(&row)
+zipping_iterator<MapRow>::zipping_iterator(const MapRow &aRow, std::size_t pos)
+    : row_(&aRow)
     , value_()
     , pos_(pos)
 {

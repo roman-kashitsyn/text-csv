@@ -8,6 +8,8 @@ enable_testing()
 find_package(Boost
   COMPONENTS unit_test_framework)
 
+set(CMAKE_CXX_STANDARD 11)
+
 if (Boost_FOUND)
   add_executable(csv_test
     test/test_rows.cpp
